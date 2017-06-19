@@ -339,5 +339,10 @@ namespace MigrationSample
         {
             Process.Start("https://powerbi.microsoft.com/documentation/powerbi-developer-migrate-tool/#step-4-upload");
         }
+
+        private void startToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://powerbi.microsoft.com/documentation/powerbi-developer-migrate-tool");
+        }
     }
 }
