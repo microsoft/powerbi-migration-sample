@@ -110,6 +110,12 @@
     <Compile Include="Core\MigrationPlan.cs" />
     <Compile Include="Core\ReportMigrationData.cs" />
     <Compile Include="Core\SaaSController.cs" />
+    <Compile Include="Dialogs\HelpDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Dialogs\HelpDialog.Designer.cs">
+      <DependentUpon>HelpDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RenameForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +151,9 @@
     <Compile Include="MigrationTabForm.Designer.cs">
       <DependentUpon>MigrationTabForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Dialogs\HelpDialog.resx">
+      <DependentUpon>HelpDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\RenameForm.resx">
       <DependentUpon>RenameForm.cs</DependentUpon>
     </EmbeddedResource>
