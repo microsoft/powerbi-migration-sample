@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using MigrationWinFormSample.Dialogs;
 using System;
 using System.Configuration;
 using System.Windows.Forms;
@@ -27,14 +28,14 @@ namespace MigrationSample.Core
         {
             if (PBISaaSAuthResult == null || PBISaaSAuthResult.ExpiresOn < DateTime.UtcNow)
             {
-                MessageBox.Show(
-                    "Please sign in as Master User in order to create groups and upload content into PowerBI service",
+
+                var dialog = new HelpDialog(
                     "Sing In As Master User",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1,
-                    0,
-                    "https://powerbi.microsoft.com/it-it/documentation/powerbi-developer-migrate-from-powerbi-embedded/");
+                    "Please sign in as Master User in order to create groups and upload content into PowerBI service",
+                    "https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-migrate-from-powerbi-embedded/#accounts-within-azure-ad"
+                    );
+
+                var dialogResult = dialog.ShowDialog();
 
                 AuthenticationContext authContext = new AuthenticationContext(authorityUri);
                 PBISaaSAuthResult = authContext.AcquireToken(resourceUri, clientId, redirectUri, PromptBehavior.Always);

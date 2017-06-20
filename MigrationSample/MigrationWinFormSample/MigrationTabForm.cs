@@ -123,11 +123,13 @@ namespace MigrationSample
 
         public void UpdateAnalyzeGrid()
         {
+            if (AnalyzedReportsSourceManager.FilteredReports == null)
+            {
+                return;
+            }
+
             AnalyzedReportsSourceManager.UpdateSource();
 
-            //
-            // This code will be enabled when the documentation is uploaded
-            //
             if (analyzeGridView.Columns["Type"] != null && analyzeGridView.Columns["Type"].Visible)
             {
                 analyzeGridView.Columns["Type"].Visible = false;
