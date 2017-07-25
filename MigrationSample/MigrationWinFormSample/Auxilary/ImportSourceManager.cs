@@ -7,7 +7,6 @@ namespace MigrationSample.Auxilary
     {
         public ImportSourceManager(DataGridView dataGridView) : base(dataGridView)
         {
-
         }
 
         public override void UpdateSource()

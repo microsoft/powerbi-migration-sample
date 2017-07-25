@@ -27,12 +27,9 @@ namespace MigrationSample
         {
             InitializeComponent();
 
-            LoadAppData();
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
             MainControl = this;
+
+            LoadAppData();
         }
 
         public ResourceGroupTabPage AddTab(MigrationPlan migrationPlan, string migrationPlanFilePath)
@@ -343,6 +340,14 @@ namespace MigrationSample
         private void startToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start("https://powerbi.microsoft.com/documentation/powerbi-developer-migrate-tool");
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            foreach (var page in tabControlMain.TabPages)
+            {
+                ((ResourceGroupTabPage)page).ResizeItemSize();
+            }
         }
     }
 }

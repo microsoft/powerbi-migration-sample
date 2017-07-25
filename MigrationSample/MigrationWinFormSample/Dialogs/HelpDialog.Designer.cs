@@ -85,7 +85,7 @@
             this.HelpBtn.Name = "HelpBtn";
             this.HelpBtn.Size = new System.Drawing.Size(96, 26);
             this.HelpBtn.TabIndex = 0;
-            this.HelpBtn.Text = "Help";
+            this.HelpBtn.Text = "Learn more";
             this.HelpBtn.UseVisualStyleBackColor = true;
             this.HelpBtn.Click += new System.EventHandler(this.HelpBtn_Click);
             // 
@@ -95,7 +95,7 @@
             this.OKbtn.Name = "OKbtn";
             this.OKbtn.Size = new System.Drawing.Size(96, 26);
             this.OKbtn.TabIndex = 1;
-            this.OKbtn.Text = "OK";
+            this.OKbtn.Text = "Sign in";
             this.OKbtn.UseVisualStyleBackColor = true;
             this.OKbtn.Click += new System.EventHandler(this.OKbtn_Click);
             // 

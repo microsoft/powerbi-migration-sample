@@ -14,6 +14,13 @@ namespace MigrationSample.Auxilary
             public static string OldImport = $"Imported Dataset. Created before {ReportMigrationData.MinimalSupportedImportUpdateDate.ToString("MM/dd/yyyy")}.";
         }
 
+        public static class DownloadabilityStrings
+        {
+            public static string CanBeDownloaded = "Yes. Can be downloaded.";
+            public static string ShouldBeCreatedFromLocal = "No. Should be created from local pbix.";
+            public static string ShouldBeCreatedFromJson = "No. Should be recreated from json.";
+        }
+
         public AnalyzeSourceManager(DataGridView dataGridView) : base(dataGridView)
         {
 
@@ -28,8 +35,8 @@ namespace MigrationSample.Auxilary
                     (r.IsPushDataset) ? ReportTypeStrings.PushDataset :
                     (!string.IsNullOrWhiteSpace(r.DirectQueryConnectionString)) ? ReportTypeStrings.ImportedDirectQuery :
                     ReportTypeStrings.ImportedCached,
-                Downloadable = (r.IsBoundToOldDataset) ? "No. Should be created from local pbix." :
-                    (r.IsPushDataset) ? "No. Should be recreated from json." : "Yes. Can be downloaded.",
+                Downloadable = (r.IsBoundToOldDataset) ? DownloadabilityStrings.ShouldBeCreatedFromLocal :
+                    (r.IsPushDataset) ? DownloadabilityStrings.ShouldBeCreatedFromJson : DownloadabilityStrings.CanBeDownloaded,
             });
 
             base.UpdateSource();

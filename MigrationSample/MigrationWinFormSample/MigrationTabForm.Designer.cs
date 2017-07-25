@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.mainMigrationTlp = new System.Windows.Forms.TableLayoutPanel();
             this.mainMigrationTc = new System.Windows.Forms.TabControl();
@@ -80,7 +81,6 @@
             this.prevToDownloadBtn = new System.Windows.Forms.Button();
             this.groupGridAndAuxButtonsTlp = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-            this.createGroupResetStatusBtn = new System.Windows.Forms.Button();
             this.resetGroupIdsBtn = new System.Windows.Forms.Button();
             this.groupsGridView = new System.Windows.Forms.DataGridView();
             this.uploadTabPage = new System.Windows.Forms.TabPage();
@@ -95,9 +95,10 @@
             this.uploadControlFlp = new System.Windows.Forms.FlowLayoutPanel();
             this.resetSelectedBtn = new System.Windows.Forms.Button();
             this.ResetAllBtn = new System.Windows.Forms.Button();
-            this.nameConflictLbl = new System.Windows.Forms.Label();
             this.nameConflictCB = new System.Windows.Forms.ComboBox();
+            this.nameConflictLbl = new System.Windows.Forms.Label();
             this.importGridView = new System.Windows.Forms.DataGridView();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.mainMigrationTlp.SuspendLayout();
             this.mainMigrationTc.SuspendLayout();
             this.analyzeAndPlanTabPage.SuspendLayout();
@@ -165,11 +166,13 @@
             this.mainMigrationTc.Name = "mainMigrationTc";
             this.mainMigrationTc.SelectedIndex = 0;
             this.mainMigrationTc.Size = new System.Drawing.Size(1270, 687);
+            this.mainMigrationTc.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.mainMigrationTc.TabIndex = 27;
             this.mainMigrationTc.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
             // 
             // analyzeAndPlanTabPage
             // 
+            this.analyzeAndPlanTabPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.analyzeAndPlanTabPage.Controls.Add(this.analyzeActionButtonsAndRestTlp);
             this.analyzeAndPlanTabPage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.analyzeAndPlanTabPage.Location = new System.Drawing.Point(4, 34);
@@ -317,9 +320,9 @@
             this.rootFolderLbl.Location = new System.Drawing.Point(2, 0);
             this.rootFolderLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.rootFolderLbl.Name = "rootFolderLbl";
-            this.rootFolderLbl.Size = new System.Drawing.Size(65, 13);
+            this.rootFolderLbl.Size = new System.Drawing.Size(74, 13);
             this.rootFolderLbl.TabIndex = 1;
-            this.rootFolderLbl.Text = "Root Folder:";
+            this.rootFolderLbl.Text = "Download To:";
             // 
             // rootFolderTb
             // 
@@ -341,7 +344,7 @@
             this.usePaasTologyForDiskBtn.Name = "usePaasTologyForDiskBtn";
             this.usePaasTologyForDiskBtn.Size = new System.Drawing.Size(137, 21);
             this.usePaasTologyForDiskBtn.TabIndex = 5;
-            this.usePaasTologyForDiskBtn.Text = "Generate PBIX Paths";
+            this.usePaasTologyForDiskBtn.Text = "Update Paths";
             this.usePaasTologyForDiskBtn.UseVisualStyleBackColor = true;
             this.usePaasTologyForDiskBtn.Click += new System.EventHandler(this.usePaasTologyForDiskBtn_Click_1);
             // 
@@ -402,9 +405,9 @@
             this.groupNamePrefixLbl.Location = new System.Drawing.Point(2, 0);
             this.groupNamePrefixLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.groupNamePrefixLbl.Name = "groupNamePrefixLbl";
-            this.groupNamePrefixLbl.Size = new System.Drawing.Size(90, 13);
+            this.groupNamePrefixLbl.Size = new System.Drawing.Size(96, 13);
             this.groupNamePrefixLbl.TabIndex = 10;
-            this.groupNamePrefixLbl.Text = "GroupNamePrefix";
+            this.groupNamePrefixLbl.Text = "Group Name Prefix";
             // 
             // groupPrefixTB
             // 
@@ -412,7 +415,7 @@
             this.groupPrefixTB.Location = new System.Drawing.Point(2, 15);
             this.groupPrefixTB.Margin = new System.Windows.Forms.Padding(2);
             this.groupPrefixTB.Name = "groupPrefixTB";
-            this.groupPrefixTB.Size = new System.Drawing.Size(312, 20);
+            this.groupPrefixTB.Size = new System.Drawing.Size(268, 20);
             this.groupPrefixTB.TabIndex = 9;
             this.groupPrefixTB.Text = "Migrated";
             // 
@@ -434,9 +437,9 @@
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(284, 29);
+            this.label1.Size = new System.Drawing.Size(274, 29);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Analyze PaaS Topology";
+            this.label1.Text = "Current PaaS Structure";
             // 
             // migrationPlanLbl
             // 
@@ -450,7 +453,7 @@
             this.migrationPlanLbl.Name = "migrationPlanLbl";
             this.migrationPlanLbl.Size = new System.Drawing.Size(329, 40);
             this.migrationPlanLbl.TabIndex = 3;
-            this.migrationPlanLbl.Text = "Plan Migration";
+            this.migrationPlanLbl.Text = "Target Structure";
             this.migrationPlanLbl.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // analyzeAnalyzeTlp
@@ -492,7 +495,7 @@
             this.analyzeReportsTlp.Margin = new System.Windows.Forms.Padding(0);
             this.analyzeReportsTlp.Name = "analyzeReportsTlp";
             this.analyzeReportsTlp.RowCount = 2;
-            this.analyzeReportsTlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.analyzeReportsTlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 43F));
             this.analyzeReportsTlp.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.analyzeReportsTlp.Size = new System.Drawing.Size(596, 569);
             this.analyzeReportsTlp.TabIndex = 1;
@@ -511,24 +514,26 @@
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.analyzeGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.analyzeGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.analyzeGridView.Location = new System.Drawing.Point(3, 33);
+            this.analyzeGridView.Location = new System.Drawing.Point(3, 46);
             this.analyzeGridView.Name = "analyzeGridView";
-            this.analyzeGridView.Size = new System.Drawing.Size(590, 533);
+            this.analyzeGridView.Size = new System.Drawing.Size(590, 520);
             this.analyzeGridView.TabIndex = 9;
             this.analyzeGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.analyzeGridView_CellClick);
+            this.analyzeGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.analyzeGridView_CellFormatting);
             // 
             // reportsStatisticsLbl
             // 
-            this.reportsStatisticsLbl.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.reportsStatisticsLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.reportsStatisticsLbl.AutoSize = true;
-            this.reportsStatisticsLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.reportsStatisticsLbl.Location = new System.Drawing.Point(254, 2);
+            this.reportsStatisticsLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.reportsStatisticsLbl.Location = new System.Drawing.Point(2, 0);
             this.reportsStatisticsLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.reportsStatisticsLbl.Name = "reportsStatisticsLbl";
-            this.reportsStatisticsLbl.Size = new System.Drawing.Size(88, 26);
+            this.reportsStatisticsLbl.Size = new System.Drawing.Size(592, 43);
             this.reportsStatisticsLbl.TabIndex = 10;
             this.reportsStatisticsLbl.Text = "Reports";
-            this.reportsStatisticsLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // downloadTabPage
             // 
@@ -651,6 +656,7 @@
             this.exportGridView.ReadOnly = true;
             this.exportGridView.Size = new System.Drawing.Size(1250, 597);
             this.exportGridView.TabIndex = 0;
+            this.exportGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.exportGridView_CellFormatting);
             // 
             // createGroupsTabPage
             // 
@@ -777,7 +783,6 @@
             // 
             // flowLayoutPanel3
             // 
-            this.flowLayoutPanel3.Controls.Add(this.createGroupResetStatusBtn);
             this.flowLayoutPanel3.Controls.Add(this.resetGroupIdsBtn);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel3.Location = new System.Drawing.Point(1109, 3);
@@ -785,28 +790,18 @@
             this.flowLayoutPanel3.Size = new System.Drawing.Size(144, 611);
             this.flowLayoutPanel3.TabIndex = 1;
             // 
-            // createGroupResetStatusBtn
-            // 
-            this.createGroupResetStatusBtn.BackColor = System.Drawing.Color.Transparent;
-            this.createGroupResetStatusBtn.Location = new System.Drawing.Point(3, 3);
-            this.createGroupResetStatusBtn.Name = "createGroupResetStatusBtn";
-            this.createGroupResetStatusBtn.Size = new System.Drawing.Size(139, 24);
-            this.createGroupResetStatusBtn.TabIndex = 1;
-            this.createGroupResetStatusBtn.Text = "Reset Status";
-            this.createGroupResetStatusBtn.UseVisualStyleBackColor = false;
-            this.createGroupResetStatusBtn.Visible = false;
-            // 
             // resetGroupIdsBtn
             // 
             this.resetGroupIdsBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.resetGroupIdsBtn.BackColor = System.Drawing.Color.Transparent;
             this.flowLayoutPanel3.SetFlowBreak(this.resetGroupIdsBtn, true);
-            this.resetGroupIdsBtn.Location = new System.Drawing.Point(3, 33);
+            this.resetGroupIdsBtn.Location = new System.Drawing.Point(3, 3);
             this.resetGroupIdsBtn.Name = "resetGroupIdsBtn";
             this.resetGroupIdsBtn.Size = new System.Drawing.Size(139, 24);
             this.resetGroupIdsBtn.TabIndex = 2;
-            this.resetGroupIdsBtn.Text = "Reset Group Ids";
+            this.resetGroupIdsBtn.Text = "Forget Group Ids";
+            this.toolTip1.SetToolTip(this.resetGroupIdsBtn, "Reset the GroupIDs of the previously created groups");
             this.resetGroupIdsBtn.UseVisualStyleBackColor = false;
             this.resetGroupIdsBtn.Click += new System.EventHandler(this.resetGroupIds_click);
             // 
@@ -819,6 +814,7 @@
             this.groupsGridView.Name = "groupsGridView";
             this.groupsGridView.Size = new System.Drawing.Size(1100, 611);
             this.groupsGridView.TabIndex = 0;
+            this.groupsGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.groupsGridView_CellFormatting);
             // 
             // uploadTabPage
             // 
@@ -935,8 +931,8 @@
             // 
             this.uploadControlFlp.Controls.Add(this.resetSelectedBtn);
             this.uploadControlFlp.Controls.Add(this.ResetAllBtn);
-            this.uploadControlFlp.Controls.Add(this.nameConflictLbl);
             this.uploadControlFlp.Controls.Add(this.nameConflictCB);
+            this.uploadControlFlp.Controls.Add(this.nameConflictLbl);
             this.uploadControlFlp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.uploadControlFlp.Location = new System.Drawing.Point(1103, 3);
             this.uploadControlFlp.Name = "uploadControlFlp";
@@ -949,8 +945,9 @@
             this.resetSelectedBtn.Name = "resetSelectedBtn";
             this.resetSelectedBtn.Size = new System.Drawing.Size(139, 23);
             this.resetSelectedBtn.TabIndex = 3;
-            this.resetSelectedBtn.Text = "Reset Selected";
+            this.resetSelectedBtn.Text = "Forget Selected Ids";
             this.resetSelectedBtn.UseVisualStyleBackColor = true;
+            this.resetSelectedBtn.Visible = false;
             this.resetSelectedBtn.Click += new System.EventHandler(this.resetSelectedBtn_Click);
             // 
             // ResetAllBtn
@@ -959,29 +956,32 @@
             this.ResetAllBtn.Name = "ResetAllBtn";
             this.ResetAllBtn.Size = new System.Drawing.Size(139, 23);
             this.ResetAllBtn.TabIndex = 4;
-            this.ResetAllBtn.Text = "Reset All";
+            this.ResetAllBtn.Text = "Forget All Ids";
             this.ResetAllBtn.UseVisualStyleBackColor = true;
+            this.ResetAllBtn.Visible = false;
             this.ResetAllBtn.Click += new System.EventHandler(this.ResetAllBtn_Click);
-            // 
-            // nameConflictLbl
-            // 
-            this.nameConflictLbl.AutoSize = true;
-            this.nameConflictLbl.Location = new System.Drawing.Point(2, 58);
-            this.nameConflictLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.nameConflictLbl.Name = "nameConflictLbl";
-            this.nameConflictLbl.Size = new System.Drawing.Size(123, 26);
-            this.nameConflictLbl.TabIndex = 5;
-            this.nameConflictLbl.Text = "If a report with the same name exists:";
             // 
             // nameConflictCB
             // 
             this.nameConflictCB.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.nameConflictCB.FormattingEnabled = true;
-            this.nameConflictCB.Location = new System.Drawing.Point(2, 86);
+            this.nameConflictCB.Location = new System.Drawing.Point(2, 60);
             this.nameConflictCB.Margin = new System.Windows.Forms.Padding(2);
             this.nameConflictCB.Name = "nameConflictCB";
             this.nameConflictCB.Size = new System.Drawing.Size(141, 21);
             this.nameConflictCB.TabIndex = 6;
+            // 
+            // nameConflictLbl
+            // 
+            this.nameConflictLbl.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.nameConflictLbl.AutoSize = true;
+            this.uploadControlFlp.SetFlowBreak(this.nameConflictLbl, true);
+            this.nameConflictLbl.Location = new System.Drawing.Point(2, 83);
+            this.nameConflictLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nameConflictLbl.Name = "nameConflictLbl";
+            this.nameConflictLbl.Size = new System.Drawing.Size(123, 26);
+            this.nameConflictLbl.TabIndex = 5;
+            this.nameConflictLbl.Text = "If a report with the same name exists.";
             // 
             // importGridView
             // 
@@ -992,6 +992,7 @@
             this.importGridView.Name = "importGridView";
             this.importGridView.Size = new System.Drawing.Size(1094, 591);
             this.importGridView.TabIndex = 0;
+            this.importGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.importGridView_CellFormatting);
             // 
             // MigrationTabForm
             // 
@@ -1063,7 +1064,6 @@
         private System.Windows.Forms.DataGridView groupsGridView;
         private System.Windows.Forms.FlowLayoutPanel createGroupControlFlp;
         private System.Windows.Forms.Button createMissingGroupsBtn;
-        private System.Windows.Forms.Button createGroupResetStatusBtn;
         private System.Windows.Forms.Button resetGroupIdsBtn;
         private System.Windows.Forms.TabPage uploadTabPage;
         private System.Windows.Forms.TableLayoutPanel uploadControlTlp;
@@ -1119,5 +1119,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TableLayoutPanel analyzeAnalyzeTlp;
         private System.Windows.Forms.TableLayoutPanel analyzeReportsTlp;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

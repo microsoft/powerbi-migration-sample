@@ -10,7 +10,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net;
@@ -26,6 +25,28 @@ namespace MigrationSample
             public const string DeleteWorkspace = "Delete Workspace from Migration Plan";
             public const string DeleteWorkspaceCollection = "Delete Workspace Collection from Migration Plan";
             public const string RenameGroup = "Rename Group";
+        }
+
+        private class Errors
+        {
+            public class Import
+            {
+                public const string DuplicateReport = "Duplicate report";
+                public const string GroupIdsMismatch = "GroupIDs don't match";
+                public const string GroupWasNotFound = "The target group was not found";
+                public const string UploadFailed = "Upload Failed";
+            }
+
+            public class Export
+            {
+                public const string PBIXNotCreated = "PBIX file was not created";
+                public const string DownloadFailed = "Download failed";
+            }
+
+            public class GroupCreation
+            {
+                public const string FailedToCreateGroup = "Failed to Create Group";
+            }
         }
 
         public MigrationPlan MigrationPlan { get; private set; }
@@ -227,6 +248,13 @@ namespace MigrationSample
             nameConflictCB.Items.Add("Ignore");
             nameConflictCB.Items.Add("Overwrite");
             nameConflictCB.SelectedIndex = 0;
+
+            ResizeItemSize();
+        }
+
+        public void ResizeItemSize()
+        {
+            mainMigrationTc.ItemSize = new Size(MainForm.MainControl.Width / mainMigrationTc.TabCount -10, 0);
         }
 
         private async Task AnalyzePaaSForMigration()
@@ -235,7 +263,11 @@ namespace MigrationSample
             // Warn user that the data will be lost
             if (MigrationPlan.ReportsMigrationData.Any())
             {
-                var dialogResult = MessageBox.Show("This Resource Group has already been analyzed. Analyze and loose previous data?", "Migration Sample", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                var dialogResult = MessageBox.Show(
+                    "This resource group has already been analyzed. Do you want to continue and overwrite existing data? ",
+                    "Migration Sample", 
+                    MessageBoxButtons.YesNo, 
+                    MessageBoxIcon.Warning);
                 if (dialogResult != DialogResult.Yes)
                 {
                     return;
@@ -349,24 +381,24 @@ namespace MigrationSample
             UpdateReportStatisticsLabel();
         }
 
-        private void UpdateReportStatisticsLabel(int exportableReportsCnt, int allReportsCnt)
+        private void UpdateReportStatisticsLabel(string firstLine, int exportableReportsCnt, int allReportsCnt)
         {
-            reportsStatisticsLbl.Text = $"{exportableReportsCnt} out of {allReportsCnt} reports are downloadable.";
+            reportsStatisticsLbl.Text = $"{firstLine}\r\n{exportableReportsCnt} out of {allReportsCnt} reports are downloadable.";
         }
 
         private void UpdateReportStatisticsLabel()
         {
-            UpdateReportStatisticsLabel(ExportableReportsCnt, AllReportsCnt);
+            UpdateReportStatisticsLabel($"Resource group: {MigrationPlan.Context.ResourceGroupName}", ExportableReportsCnt, AllReportsCnt);
         }
 
         private void UpdateReportStatisticsLabel(AnalyzedWorkspaceCollection analyzedWorkspaceCollection)
         {
-            UpdateReportStatisticsLabel(analyzedWorkspaceCollection.ExportableReportsCnt,analyzedWorkspaceCollection.AllReportsCnt);
+            UpdateReportStatisticsLabel($"Workspace Collection: {analyzedWorkspaceCollection.WorkspaceCollectionName}", analyzedWorkspaceCollection.ExportableReportsCnt,analyzedWorkspaceCollection.AllReportsCnt);
         }
 
         private void UpdateReportStatisticsLabel(AnalyzedWorkspace analyzedWorkspace)
         {
-            UpdateReportStatisticsLabel(analyzedWorkspace.ExportableReportsCnt, analyzedWorkspace.Reports.Count);
+            UpdateReportStatisticsLabel($"Workspace: {analyzedWorkspace.WorkspaceId}", analyzedWorkspace.ExportableReportsCnt, analyzedWorkspace.Reports.Count);
         }
 
         private async Task AnalyzeWorkspaceCollection(AnalyzedWorkspaceCollection analyzedWorkspaceCollection)
@@ -622,8 +654,6 @@ namespace MigrationSample
 
         private void UpdateGroupsGrid()
         {
-            //GroupsSourceManager.FilteredReports = MigrationPlan.ReportsMigrationData.Where(r => File.Exists(r.PbixPath)).ToList();
-
             GroupsSourceManager.FilteredReports = MigrationPlan.ReportsMigrationData.Where(r => File.Exists(r.PbixPath)).GroupBy(r => r.SaaSTargetGroupName).Select(g => g.First()).ToList();
 
             GroupsSourceManager.UpdateSource();
@@ -666,7 +696,7 @@ namespace MigrationSample
             if (MigrationPlan.ReportsMigrationData.Any())
             {
                 var dialogResult = MessageBox.Show(
-                    $"There is an existing Download Plan, it's data will be lost.\r\n\r\nUse Folder Structure like in PaaS topology: {rootFolderTb.Text}\\ResourceGroup\\WorkspaceCollection\\Workspace\reportName.pbix ?", "Migration Sample", 
+                    $"A download plan already exists. If you have made changes to the download structure, they will be overwritten.\r\n\r\nUse Folder Structure like in current PaaS topology: {rootFolderTb.Text}\\ResourceGroup\\WorkspaceCollection\\Workspace\\reportName.pbix?", "Change download structure", 
                     MessageBoxButtons.YesNo, 
                     MessageBoxIcon.Warning);
                 if (dialogResult != DialogResult.Yes)
@@ -716,7 +746,9 @@ namespace MigrationSample
                 string targetFolder = Path.GetDirectoryName(report.PbixPath);
 
                 if (!Directory.Exists(targetFolder))
+                {
                     Directory.CreateDirectory(targetFolder);
+                }
 
                 report.ExportState = ExportState.InProgress;
                 RunInUIContext(UpdateExportGrid);
@@ -728,17 +760,19 @@ namespace MigrationSample
                     if (File.Exists(report.PbixPath))
                     {
                         report.ExportState = ExportState.Done;
-                        report.LastExportStatus = response.StatusCode.ToString();
+                        report.LastExportStatus = "Download was successful";
                     }
                     else
                     {
                         report.ExportState = ExportState.Failed;
-                        report.LastExportStatus = "Export Status is {response.StatusCode}, but the file was not created";
+                        report.LastExportStatus = Errors.Export.PBIXNotCreated;
                     }
                 }
                 else
                 {
                     report.ExportState = ExportState.Failed;
+                    report.LastExportStatus = Errors.Export.DownloadFailed;
+
                     if (response != null)
                     {
                         report.LastExportStatus = response.StatusCode.ToString();
@@ -774,9 +808,6 @@ namespace MigrationSample
 
         private async Task CreateMissingGroups(List<ReportMigrationData> selectedReports)
         {
-            Dictionary<string, string> createdGroupIds = new Dictionary<string, string>();
-            HashSet<string> confirmedGroups = new HashSet<string>();
-
             if (!selectedReports.Any())
             {
                 return;
@@ -789,83 +820,31 @@ namespace MigrationSample
                 report.SaaSTargetGroupCreationStatus = "In Progress";
                 RunInUIContext(UpdateGroupsGrid);
 
-                if (createdGroupIds.ContainsKey(report.SaaSTargetGroupName))
-                {
-                    report.SaaSTargetGroupId = createdGroupIds[report.SaaSTargetGroupName];
-                    if (confirmedGroups.Contains(report.SaaSTargetGroupId))
-                    {
-                        report.SaaSTargetGroupCreationStatus = "Confirmed";
-                    }
-                    continue;
-                }
-
                 var group = groups.Value.FirstOrDefault(g => string.Equals(g.Name, report.SaaSTargetGroupName, StringComparison.OrdinalIgnoreCase));
 
                 if (group == null)
                 {
-
-                    if (string.IsNullOrWhiteSpace(report.SaaSTargetGroupId))
+                    group = await SaaSController.CreateGroupAsync(report.SaaSTargetGroupName);
+                    if (group == null)
                     {
-                        var createdO365Group = await TryCreateGroup(report.SaaSTargetGroupName);
-
-                        if (createdO365Group == null)
-                        {
-                            report.SaaSTargetGroupCreationStatus = "Failed to Create Group";
-                            continue;
-                        }
-
-                        report.SaaSTargetGroupId = createdO365Group.Id;
-                        createdGroupIds[report.SaaSTargetGroupName] = createdO365Group.Id;
+                        report.SaaSTargetGroupCreationStatus = Errors.GroupCreation.FailedToCreateGroup;
+                        continue;
                     }
 
-                    // The created group is not found by GetGroups untill it is refreshed.
-                    // So, try to get imports from the newly created group untill the result is not null
-                    // This code will be removed once PowerBI API for Group Creation is implemented.
-                    report.SaaSTargetGroupCreationStatus = "Created. Not Confirmed";
-                    RunInUIContext(UpdateGroupsGrid);
-
-                    Microsoft.PowerBI.Api.V2.Models.ODataResponseListImport imports = null;
-                    for (int  i = 0; i < 15 && imports == null; i++)
+                    foreach (var same_group_report in MigrationPlan.ReportsMigrationData.Where(r => string.Equals(r.SaaSTargetGroupName, report.SaaSTargetGroupName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        try
-                        {
-                            imports = await SaaSController.GetImports(report.SaaSTargetGroupId);
-                        }
-                        catch (Microsoft.Rest.HttpOperationException)
-                        {
-                            if (imports == null) Thread.Sleep(1000);
-                        }
-                    }
-
-                    if (imports != null)
-                    {
-                        report.SaaSTargetGroupCreationStatus = "Confirmed";
-                        confirmedGroups.Add(report.SaaSTargetGroupId);
+                        same_group_report.SaaSTargetGroupId = group.Id;
+                        same_group_report.SaaSTargetGroupCreationStatus = "Done";
                     }
                 }
                 else  // group is found by GetGroups
                 {
-                    confirmedGroups.Add(group.Id);
-                    report.SaaSTargetGroupCreationStatus = "Confirmed";
+                    report.SaaSTargetGroupCreationStatus = "Done";
                     report.SaaSTargetGroupId = group.Id;
                 }
             }
             RunInUIContext(UpdateGroupsGrid);
             SaveMigrationPlan();
-        }
-
-        private async Task<O365Group> TryCreateGroup(string groupName)
-        {
-            try
-            {
-                O365Group createdO365Group = await SaaSController.CreateGroup(groupName);
-                return createdO365Group;
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(e.ToString());
-                return null;
-            }
         }
 
         private async void createMissingGroupsBtn_Click(object sender, EventArgs e)
@@ -921,7 +900,7 @@ namespace MigrationSample
                 if (group == null)
                 {
                     report.SaaSImportState = ImportState.Failed;
-                    report.SaaSImportError = "The target group is not found";
+                    report.SaaSImportError = Errors.Import.GroupWasNotFound;
                     continue;
                 }
                 else
@@ -932,7 +911,7 @@ namespace MigrationSample
                     }
                     else if (!string.Equals(report.SaaSTargetGroupId, group.Id, StringComparison.OrdinalIgnoreCase))
                     {
-                        report.SaaSImportError = "The group Id is different from the created";
+                        report.SaaSImportError = Errors.Import.GroupIdsMismatch;
                         report.SaaSImportState = ImportState.Failed;
                         continue;
                     }
@@ -948,7 +927,7 @@ namespace MigrationSample
                     // report with the same name exists
                     if (selectedNameConflict == "Abort")
                     {
-                        report.SaaSImportError = "Report with the same name already exists";
+                        report.SaaSImportError = Errors.Import.DuplicateReport;
                         report.SaaSImportState = ImportState.Failed;
                         RunInUIContext(UpdateImportGrid);
                         continue;
@@ -969,7 +948,7 @@ namespace MigrationSample
 
                 if (importId == null)
                 {
-                    report.SaaSImportError = "Failed to post import";
+                    report.SaaSImportError = Errors.Import.UploadFailed;
                     report.SaaSImportState = ImportState.Failed;
                     RunInUIContext(UpdateImportGrid);
                     continue;
@@ -984,13 +963,17 @@ namespace MigrationSample
                     {
                         import = imports.Value.FirstOrDefault(i => string.Equals(i.Id, importId, StringComparison.OrdinalIgnoreCase));
                     }
-                } while (import.ImportState != "Succeeded" && import.ImportState != "Failed");
+                } while (import == null || (import.ImportState != "Succeeded" && import.ImportState != "Failed"));
 
                 report.SaaSImportState = import.ImportState == "Succeeded" ? ImportState.Done : ImportState.Failed;
                 if (import.ImportState == "Succeeded" && import.Reports.Count == 1)
                 {
                     report.SaaSReportId = import.Reports[0].Id;
                     report.SaaSImportError = null;
+                }
+                else
+                {
+                    report.SaaSImportError = Errors.Import.UploadFailed;
                 }
             }
 
@@ -1012,7 +995,7 @@ namespace MigrationSample
 
         private void resetGroupIds_click(object sender, EventArgs e)
         {
-            foreach (var report in GroupsSourceManager.FilteredReports)
+            foreach (var report in MigrationPlan.ReportsMigrationData)
             {
                 report.SaaSTargetGroupId = null;
             }
@@ -1068,10 +1051,9 @@ namespace MigrationSample
 
         private bool PromptImportPlanOverWrite()
         {
-            var resetWarning = "Also the data about created Groups and uploaded Reports will be lost.";
-
             var dialogResult = MessageBox.Show(
-                $"There is an existing Upload Plan\r\n\r\nIf you procceed, the names of the previous Groups and Reports will be lost.\r\n\r\n{resetWarning}\r\n\r\nAre you sure you want to overwrite previous names and use {groupPrefixTB.Text}-WorkspaceId for a Group name?", "Migration Sample", 
+                "An upload plan already exists. If you have made changes to the target structure, they will be overwritten.\r\n\r\nIf you have already created groups and uploaded reports, GroupIDs and UploadedReportIDs will also be overwritten.\r\n\r\nAre you sure you want to continue and overwrite this data?",
+                "Change target structure", 
                 MessageBoxButtons.YesNo, 
                 MessageBoxIcon.Warning);
 
@@ -1206,6 +1188,70 @@ namespace MigrationSample
         private void prevToCreatGroupBtn_Click(object sender, EventArgs e)
         {
             mainMigrationTc.SelectedIndex = 2;
+        }
+
+        private void exportGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (exportGridView.RowCount > 1 && e.ColumnIndex == exportGridView.Columns["LastExportStatus"].Index && e.Value != null)
+            {
+                DataGridViewCell cell = exportGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.Value.Equals(Errors.Export.PBIXNotCreated))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                    cell.ToolTipText = "Download was successful, but a PBIX file was not created.\r\nCheck that the report is closed and that there is sufficient disc space, and try again.";
+                }
+                else if (e.Value.Equals(Errors.Export.DownloadFailed))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                    cell.ToolTipText = "There was a problem downloading this report.\r\nCheck that the report still exists and was created after November 26, 2016.";
+                }
+            }
+        }
+
+        private void groupsGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (groupsGridView.RowCount > 1 && groupsGridView.RowCount > 0 && e.ColumnIndex == groupsGridView.Columns["GroupCreationStatus"].Index && e.Value != null)
+            {
+                DataGridViewCell cell = groupsGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.Value.Equals(Errors.GroupCreation.FailedToCreateGroup))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                }
+            }
+        }
+
+        private void importGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (importGridView.RowCount > 1 && e.ColumnIndex == importGridView.Columns["UploadError"].Index && e.Value != null)
+            {
+                DataGridViewCell cell = this.importGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (e.Value.Equals(Errors.Import.GroupIdsMismatch))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                    cell.ToolTipText = "The GroupID you are trying to upload is different from the GroupID on the service.";
+                }
+                else if (e.Value.Equals(Errors.Import.DuplicateReport))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                    cell.ToolTipText = "A report with the same name already exists.";
+                }
+            }
+        }
+
+        private void analyzeGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (analyzeGridView.RowCount > 1 && e.ColumnIndex == analyzeGridView.Columns["Downloadable"].Index && e.Value != null)
+            {
+                DataGridViewCell cell = analyzeGridView.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (!e.Value.Equals(AnalyzeSourceManager.DownloadabilityStrings.CanBeDownloaded))
+                {
+                    cell.Style.ForeColor = Color.Red;
+                }
+                else
+                {
+                    cell.Style.ForeColor = Color.Black;
+                }
+            }
         }
     }
 }
