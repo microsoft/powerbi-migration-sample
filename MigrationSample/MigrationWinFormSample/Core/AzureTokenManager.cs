@@ -28,10 +28,9 @@ namespace MigrationSample.Core
         {
             if (PBISaaSAuthResult == null || PBISaaSAuthResult.ExpiresOn < DateTime.UtcNow)
             {
-
                 var dialog = new HelpDialog(
-                    "Sing In As Master User",
-                    "Please sign in as Master User in order to create groups and upload content into PowerBI service",
+                    "Master account required",
+                    "In order to create groups and upload content, you need to sign in with your master account.",
                     "https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-migrate-from-powerbi-embedded/#accounts-within-azure-ad"
                     );
 

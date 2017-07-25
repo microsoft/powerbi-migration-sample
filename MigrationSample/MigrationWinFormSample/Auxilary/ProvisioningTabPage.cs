@@ -40,6 +40,11 @@ namespace MigrationSample.Dialogs
             migrationTabForm.SaveMigrationPlan();
         }
 
+        public void ResizeItemSize()
+        {
+            migrationTabForm.ResizeItemSize();
+        }
+
         public void SaveMigrationPlanAs()
         {
             migrationTabForm.SaveMigrationPlanAs();

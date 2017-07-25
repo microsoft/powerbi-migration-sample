@@ -16,7 +16,7 @@ namespace MigrationSample.Auxilary
             DataSource = FilteredReports.Select(r => new
             {
                 PaaSReportName = r.PaaSReportName,
-                PBIXExists = File.Exists(r.PbixPath) ? "Exists" : "No",
+                PBIXExists = File.Exists(r.PbixPath) ? "Yes" : "No",
                 ExportState = r.ExportState,
                 LastExportStatus = r.LastExportStatus,
                 PaaSWorkspaceCollectionName = r.PaaSWorkspaceCollectionName,
