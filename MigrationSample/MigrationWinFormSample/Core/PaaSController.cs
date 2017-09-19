@@ -149,7 +149,7 @@ namespace MigrationSample.Core
         }
 
         /// <summary>
-        /// Gets a list of Power BI Embedded workspaces within the specified collection
+        /// Gets a list of Power BI Workspace Collections workspaces within the specified collection
         /// </summary>
         /// <param name="workspaceCollectionName">The Power BI workspace collection name</param>
         /// <returns></returns>

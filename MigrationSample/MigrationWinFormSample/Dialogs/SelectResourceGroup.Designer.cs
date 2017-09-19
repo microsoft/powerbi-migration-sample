@@ -169,7 +169,7 @@
             this.ClientSize = new System.Drawing.Size(474, 536);
             this.Controls.Add(this.mainResoureceGroupTlp);
             this.Name = "SelectResourceGroup";
-            this.Text = "Select PowerBI Embedded Resource Group";
+            this.Text = "Select Power BI Workspace Collections Resource Group";
             this.Load += new System.EventHandler(this.SelectResourceGroup_Load);
             ((System.ComponentModel.ISupportInitialize)(this.SubscriptionsGridView)).EndInit();
             this.mainResoureceGroupTlp.ResumeLayout(false);
