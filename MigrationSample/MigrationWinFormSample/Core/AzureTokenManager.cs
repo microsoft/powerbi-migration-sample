@@ -11,7 +11,7 @@ namespace MigrationSample.Core
         private static readonly string clientId = "ea0616ba-638b-4df5-95b9-636659ae5121";
         private static readonly Uri redirectUri = new Uri("urn:ietf:wg:oauth:2.0:oob");
 
-        static readonly string resourceUri = "https://analysis.windows.net/powerbi/api";
+        static readonly string resourceUri = ConfigurationManager.AppSettings["AADPowerBIResourceId"];
         static readonly string authorityUri = $"{ConfigurationManager.AppSettings["powerbi-service-loginWindowsUrl"]}/common/oauth2/authorize";
 
         static readonly string graphResourceUri = ConfigurationManager.AppSettings["graph-apiEndpointUri"];

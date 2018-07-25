@@ -23,13 +23,36 @@ namespace MigrationSample.Core
     public class PaaSController
     {
         private static readonly string version = "?api-version=2016-01-29";
-        private static readonly string armResource = "https://management.core.windows.net/";
         private static readonly string clientId = "ea0616ba-638b-4df5-95b9-636659ae5121";
         private static readonly Uri redirectUri = new Uri("urn:ietf:wg:oauth:2.0:oob");
 
         private static Dictionary<string, WorkspaceCollectionKeys> accessKeysPerWSC = new Dictionary<string, WorkspaceCollectionKeys>();
 
         public PBIProvisioningContext Context { get; set; }
+
+        private string TenantsUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["tenantsUrl"];
+            }
+        }
+
+        private string SubscriptionsUrl
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["subscriptionsUrl"];
+            }
+        }
+
+        private string ArmResource
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["armResource"];
+            }
+        }
 
         private string ApiEndpointUri {
             get
@@ -145,7 +168,7 @@ namespace MigrationSample.Core
 
         public async Task<string> GetSubscriptions()
         {
-            return await GetFromUrl(string.Format("{0}/subscriptions{1}", GetAzureEndpointUrl(), version));
+            return await GetFromUrl(SubscriptionsUrl);
         }
 
         /// <summary>
@@ -266,7 +289,7 @@ namespace MigrationSample.Core
 
             var authority = string.Format("{0}/{1}/oauth2/authorize", GetWindowsLoginUrl(), tenantId);
             var authContext = new AuthenticationContext(authority);
-            var authenticationResult = await authContext.AcquireTokenByRefreshTokenAsync(commonToken.RefreshToken, clientId, armResource);
+            var authenticationResult = await authContext.AcquireTokenByRefreshTokenAsync(commonToken.RefreshToken, clientId, ArmResource);
 
             SetAzureToken(authenticationResult);
 
@@ -278,9 +301,9 @@ namespace MigrationSample.Core
             using (var httpClient = new HttpClient())
             {
                 httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + commonToken);
-                string mgmUrltPattern = "{0}/tenants/{1}";
+                
+                var response = await httpClient.GetStringAsync(TenantsUrl);
 
-                var response = await httpClient.GetStringAsync(string.Format(mgmUrltPattern, GetAzureEndpointUrl(), version));
                 var tenantsJson = JsonConvert.DeserializeObject<JObject>(response);
                 var tenants = tenantsJson["value"] as JArray;
 
@@ -295,7 +318,7 @@ namespace MigrationSample.Core
             var authContext = new AuthenticationContext(string.Format(urlPattern, GetWindowsLoginUrl()));
 
             AuthenticationResult result = authContext.AcquireToken(
-                resource: armResource,
+                resource: ArmResource,
                 clientId: clientId,
                 redirectUri: redirectUri,
                 promptBehavior: PaaSAuthPromptBehavior());
